@@ -1,36 +1,56 @@
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
 
 const AuthComponent = () => {
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
 
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const { access_token, id_token } = tokenResponse;
+
+      console.log(access_token, id_token,"-----------------");
+      console.log(tokenResponse,"-------")
+
+      // Send the ID token to the backend for verification
+      // const res = await fetch('/api/auth/google', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ idToken: id_token })
+      // });
+
+      // const data = await res.json();
+      // console.log('Backend response:', data);
+    },
+    onError: (errorResponse) => console.log('Error:', errorResponse),
+  });
+
   // Initialize Google Identity Services
-  useEffect(() => {
-    const initGoogleAuth = () => {
-      if (window.google && window.google.accounts) {
-        window.google.accounts.id.initialize({
-          client_id: '606812803775-bg3lhfjdqj75u71u04n9gndo0i2rbh60.apps.googleusercontent.com', // Replace with your actual client ID
-        });
-      } else {
-        console.error('Google API not loaded');
-      }
-    };
+  // useEffect(() => {
+  //   const initGoogleAuth = () => {
+  //     if (window.google && window.google.accounts) {
+  //       window.google.accounts.id.initialize({
+  //         client_id: '606812803775-bg3lhfjdqj75u71u04n9gndo0i2rbh60.apps.googleusercontent.com', // Replace with your actual client ID
+  //       });
+  //     } else {
+  //       console.error('Google API not loaded');
+  //     }
+  //   };
 
-    initGoogleAuth();
-  }, []);
+  //   initGoogleAuth();
+  // }, []);
 
-  // Set up the silent refresh mechanism
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (accessToken) {
-        console.log('Attempting silent renew...');
-        performSilentLogin(); // Trigger silent renewal every 5 seconds
-      }
-    }, 5000); // Check every 5 seconds
+  // // Set up the silent refresh mechanism
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (accessToken) {
+  //       console.log('Attempting silent renew...');
+  //       performSilentLogin(); // Trigger silent renewal every 5 seconds
+  //     }
+  //   }, 5000); // Check every 5 seconds
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [accessToken]);
+  //   return () => clearInterval(interval); // Cleanup on unmount
+  // }, [accessToken]);
 
   const handleLoginSuccess = (response) => {
     console.log('Login Success:', response);
@@ -48,24 +68,24 @@ const AuthComponent = () => {
     console.log('User logged out');
   };
 
-  // Silent login to refresh the token without showing the login prompt
-  const performSilentLogin = () => {
-    if (window.google && window.google.accounts) {
-      window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          console.error('Silent login failed or was skipped. User might be logged out.');
-        } else {
-          console.log('Silent login success');
-          // No direct method to fetch the new token; the user is already authenticated.
-          const newToken = notification.credential; // Assuming the token would be in this format
-          setAccessToken(newToken); // Update the access token
-          console.log('New token:', newToken);
-        }
-      });
-    } else {
-      console.error('Google API not loaded');
-    }
-  };
+  // // Silent login to refresh the token without showing the login prompt
+  // const performSilentLogin = () => {
+  //   if (window.google && window.google.accounts) {
+  //     window.google.accounts.id.prompt((notification) => {
+  //       if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+  //         console.error('Silent login failed or was skipped. User might be logged out.');
+  //       } else {
+  //         console.log('Silent login success');
+  //         // No direct method to fetch the new token; the user is already authenticated.
+  //         const newToken = notification.credential; // Assuming the token would be in this format
+  //         setAccessToken(newToken); // Update the access token
+  //         console.log('New token:', newToken);
+  //       }
+  //     });
+  //   } else {
+  //     console.error('Google API not loaded');
+  //   }
+  // };
 
   return (
     <div>
@@ -74,6 +94,7 @@ const AuthComponent = () => {
           onSuccess={handleLoginSuccess}
           onError={handleLoginFailure}
         />
+        // <button onClick={login}>login</button>
       ) : (
         <div>
           <h2>Welcome, User!</h2>

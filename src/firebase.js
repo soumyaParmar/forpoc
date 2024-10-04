@@ -8,7 +8,7 @@ import { getAuth,GoogleAuthProvider,signInWithPopup,signOut } from "firebase/aut
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyD36mZJ4dZDpJb1xHU1vbNEeV_n1Mzyv9A",
-  authDomain: "devdemoz.netlify.app",
+  authDomain: "auth-c8db4.firebaseapp.com",
   projectId: "auth-c8db4",
   storageBucket: "auth-c8db4.appspot.com",
   messagingSenderId: "857082116832",

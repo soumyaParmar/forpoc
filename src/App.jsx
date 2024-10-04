@@ -9,8 +9,8 @@ function App() {
     <>
       <div>
         Login
-        <Login/>
-        {/* <AuthComponent/> */}
+        {/* <Login/> */}
+        <AuthComponent/>
       </div>
     </>
   )
